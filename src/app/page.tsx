@@ -23,11 +23,13 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ThemeToggle } from "@/components/theme-toggle";
+import FacebookCard from "@/components/ui/facebook-card";
 
 export default function Home() {
   const [url, setUrl] = useState("");
   const [platform, setPlatform] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
 
   const detectPlatform = (url: string) => {
     setIsLoading(true);
@@ -132,7 +134,8 @@ export default function Home() {
             </CardContent>
           </Card>
 
-          {platform && (
+          {(platform == "facebook") ? <FacebookCard passedURL={url} /> : 
+            platform && (
             <Card className="border-orange-500/20">
               <CardHeader>
                 <div className="flex items-center gap-3">
