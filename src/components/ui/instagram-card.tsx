@@ -65,7 +65,7 @@ export default function InstagramCard({ passedURL }: { passedURL: string }) {
         <CardHeader>
           <div className="flex items-center gap-3">
             <Instagram className="h-8 w-8 text-pink-500 mb-2" />
-            <CardTitle>Instagram</CardTitle>
+            <CardTitle>Instagram Content Found</CardTitle>
           </div>
           <CardDescription>Media information</CardDescription>
         </CardHeader>

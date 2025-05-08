@@ -13,6 +13,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Twitter } from "lucide-react";
 
 interface TweetMedia {
   type: string;
@@ -47,7 +48,7 @@ export default function TwitterCard({ passedURL }: { passedURL: string }) {
     try {
       setIsLoading(true);
       setError("");
-      
+
       // Call our internal API endpoint that will communicate with RapidAPI
       const res = await fetch("/api/fetch-twitter", {
         method: "POST",
@@ -56,24 +57,30 @@ export default function TwitterCard({ passedURL }: { passedURL: string }) {
         },
         body: JSON.stringify({ url }),
       });
-      
+
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
         throw new Error(errorData.error || `Error: ${res.status}`);
       }
-      
+
       const data = await res.json();
-      
+
       // Check for error response or missing media
       if (!data.success || !data.media || data.media.length === 0) {
-        throw new Error(data.error || "No media found in tweet or failed to fetch tweet data");
+        throw new Error(
+          data.error || "No media found in tweet or failed to fetch tweet data"
+        );
       }
-      
+
       console.log("Tweet data received:", data);
       setTweetData(data);
     } catch (error) {
       console.error("Error fetching tweet data:", error);
-      setError(error instanceof Error ? error.message : "Failed to fetch tweet information");
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Failed to fetch tweet information"
+      );
       setTweetData(null);
     } finally {
       setIsLoading(false);
@@ -85,19 +92,19 @@ export default function TwitterCard({ passedURL }: { passedURL: string }) {
       setError("No media available for download");
       return;
     }
-    
+
     // Find video media - typically the first one with type "video"
-    const videoMedia = tweetData.media.find(media => media.type === "video");
-    
+    const videoMedia = tweetData.media.find((media) => media.type === "video");
+
     if (!videoMedia?.url) {
       setError("No video URL available for this tweet");
       return;
     }
-    
+
     console.log("Downloading video:", videoMedia.url);
-    
+
     // Create a download link
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = videoMedia.url;
     a.download = `twitter-video-${tweetData.id || "download"}.mp4`;
     a.target = "_blank"; // Open in new tab
@@ -107,26 +114,26 @@ export default function TwitterCard({ passedURL }: { passedURL: string }) {
   };
 
   // Twitter icon SVG
-  const TwitterIcon = () => (
-    <svg
-      className="h-8 w-8 text-blue-400"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M19.589 6.686a4.793 4.793 0 0 1-3.77-4.245V2h-3.445v13.672a2.896 2.896 0 0 1-5.201 1.743l-.002-.001.002.001a2.895 2.895 0 0 1 3.183-4.51v-3.5a6.329 6.329 0 0 0-5.394 10.692 6.33 6.33 0 0 0 10.857-4.424V8.687a8.182 8.182 0 0 0 4.773 1.526V6.79a4.831 4.831 0 0 1-1.003-.104z"
-        fill="currentColor"
-      />
-    </svg>
-  );
+  // const TwitterIcon = () => (
+  //   <svg
+  //     className="h-8 w-8 text-blue-400"
+  //     viewBox="0 0 24 24"
+  //     fill="none"
+  //     xmlns="http://www.w3.org/2000/svg"
+  //   >
+  //     <path
+  //       d="M19.589 6.686a4.793 4.793 0 0 1-3.77-4.245V2h-3.445v13.672a2.896 2.896 0 0 1-5.201 1.743l-.002-.001.002.001a2.895 2.895 0 0 1 3.183-4.51v-3.5a6.329 6.329 0 0 0-5.394 10.692 6.33 6.33 0 0 0 10.857-4.424V8.687a8.182 8.182 0 0 0 4.773 1.526V6.79a4.831 4.831 0 0 1-1.003-.104z"
+  //       fill="currentColor"
+  //     />
+  //   </svg>
+  // );
 
   if (isLoading) {
     return (
       <Card className="border-orange-500/20">
         <CardHeader>
           <div className="flex items-center gap-3">
-            <TwitterIcon />
+            <Twitter className="text-blue-600" />
             <CardTitle>Loading Twitter Content</CardTitle>
           </div>
           <CardDescription>
@@ -145,15 +152,13 @@ export default function TwitterCard({ passedURL }: { passedURL: string }) {
       <Card className="border-orange-500/20">
         <CardHeader>
           <div className="flex items-center gap-3">
-            <TwitterIcon />
+            {/* <TwitterIcon /> */}
             <CardTitle>Error</CardTitle>
           </div>
-          <CardDescription className="text-red-500">
-            {error}
-          </CardDescription>
+          <CardDescription className="text-red-500">{error}</CardDescription>
         </CardHeader>
         <CardContent>
-          <Button 
+          <Button
             onClick={() => fetchTweetData(passedURL)}
             className="w-full bg-orange-600 hover:bg-orange-700"
           >
@@ -169,7 +174,7 @@ export default function TwitterCard({ passedURL }: { passedURL: string }) {
       <Card className="border-orange-500/20">
         <CardHeader>
           <div className="flex items-center gap-3">
-            <TwitterIcon />
+            <Twitter className="text-blue-600" />
             <CardTitle>Twitter Content</CardTitle>
           </div>
           <CardDescription>
@@ -180,19 +185,19 @@ export default function TwitterCard({ passedURL }: { passedURL: string }) {
     );
   }
 
-  const hasVideo = tweetData.media.some(media => media.type === "video");
-  const videoMedia = tweetData.media.find(media => media.type === "video");
+  const hasVideo = tweetData.media.some((media) => media.type === "video");
+  const videoMedia = tweetData.media.find((media) => media.type === "video");
 
   return (
     <Card className="border-orange-500/20">
       <CardHeader>
         <div className="flex items-center gap-3">
-          <TwitterIcon />
+          <Twitter className="text-blue-600" />
           <CardTitle>Twitter Content Found</CardTitle>
         </div>
         <CardDescription>
-          {tweetData.text.length > 100 
-            ? `${tweetData.text.substring(0, 100)}...` 
+          {tweetData.text.length > 100
+            ? `${tweetData.text.substring(0, 100)}...`
             : tweetData.text}
         </CardDescription>
       </CardHeader>
@@ -200,14 +205,14 @@ export default function TwitterCard({ passedURL }: { passedURL: string }) {
       <CardContent className="space-y-4">
         {videoMedia?.thumbnail && (
           <div className="mb-4">
-            <img 
-              src={videoMedia.thumbnail} 
-              alt="Tweet media thumbnail" 
+            <img
+              src={videoMedia.thumbnail}
+              alt="Tweet media thumbnail"
               className="w-full h-auto rounded-md"
             />
           </div>
         )}
-        
+
         {hasVideo ? (
           <Tabs defaultValue="video" className="w-full">
             <TabsList className="grid w-full grid-cols-1 bg-orange-950/20">
@@ -219,7 +224,7 @@ export default function TwitterCard({ passedURL }: { passedURL: string }) {
               </TabsTrigger>
             </TabsList>
             <TabsContent value="video" className="mt-4 space-y-4">
-              <RadioGroup 
+              <RadioGroup
                 value={selectedQuality}
                 onValueChange={setSelectedQuality}
               >
@@ -228,8 +233,8 @@ export default function TwitterCard({ passedURL }: { passedURL: string }) {
                   <Label htmlFor="high">High Quality</Label>
                 </div>
               </RadioGroup>
-              <Button 
-                onClick={handleDownload} 
+              <Button
+                onClick={handleDownload}
                 className="w-full bg-orange-600 hover:bg-orange-700"
               >
                 <Download className="mr-2 h-4 w-4" />
@@ -239,14 +244,16 @@ export default function TwitterCard({ passedURL }: { passedURL: string }) {
           </Tabs>
         ) : (
           <div className="text-center py-4">
-            <p className="text-muted-foreground">No video content found in this tweet</p>
+            <p className="text-muted-foreground">
+              No video content found in this tweet
+            </p>
           </div>
         )}
-        
+
         <div className="mt-4 pt-4 border-t border-border">
-          <a 
-            href={tweetData.url} 
-            target="_blank" 
+          <a
+            href={tweetData.url}
+            target="_blank"
             rel="noopener noreferrer"
             className="text-blue-400 hover:text-blue-500 flex items-center justify-center"
           >

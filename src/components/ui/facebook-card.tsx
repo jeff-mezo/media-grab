@@ -72,7 +72,7 @@ export default function FacebookCard({ passedURL }: { passedURL: string }) {
         <CardHeader>
           <div className="flex items-center gap-3">
             <Facebook className="h-8 w-8 text-blue-600" />
-            <CardTitle>Facebook</CardTitle>
+            <CardTitle>Facebook Content Found</CardTitle>
           </div>
           <CardDescription>Media information</CardDescription>
         </CardHeader>
