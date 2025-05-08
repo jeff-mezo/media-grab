@@ -23,13 +23,22 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ThemeToggle } from "@/components/theme-toggle";
-import FacebookCard from "@/components/ui/facebook-card";
+//import FacebookCard from "@/components/ui/facebook-card";
+//import InstagramCard from "@/components/ui/instagram-card";
+
+import dynamic from "next/dynamic";
+
+const FacebookCard = dynamic(() => import("@/components/ui/facebook-card"), {
+  ssr: false,
+});
+const InstagramCard = dynamic(() => import("@/components/ui/instagram-card"), {
+  ssr: false,
+});
 
 export default function Home() {
   const [url, setUrl] = useState("");
   const [platform, setPlatform] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-
 
   const detectPlatform = (url: string) => {
     setIsLoading(true);
@@ -84,18 +93,18 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="w-full min-h-screen bg-background flex flex-col">
       <header className="border-b">
         <div className="container flex h-16 items-center justify-between px-4 md:px-6">
           <div className="flex items-center gap-2">
             <Download className="h-6 w-6 text-orange-500" />
             <span className="text-xl font-bold">MediaGrab</span>
           </div>
-          <ThemeToggle />
+          {/* <ThemeToggle /> */}
         </div>
       </header>
 
-      <main className="flex-1 container py-12 px-4 md:px-6">
+      <main className="flex-1 container mx-auto py-12 px-4 md:px-6">
         <div className="max-w-3xl mx-auto space-y-8">
           <div className="text-center space-y-3">
             <h1 className="text-4xl font-bold tracking-tight">
@@ -134,96 +143,104 @@ export default function Home() {
             </CardContent>
           </Card>
 
-          {(platform == "facebook") ? <FacebookCard passedURL={url} /> : 
+          {platform == "facebook" ? (
+            <FacebookCard key="facebook" passedURL={url} />
+          ) : platform == "instagram" ? (
+            <InstagramCard key="instagram" passedURL={url} />
+          ) : (
             platform && (
-            <Card className="border-orange-500/20">
-              <CardHeader>
-                <div className="flex items-center gap-3">
-                  {getPlatformIcon(platform)}
-                  <CardTitle>
-                    {platform === "youtube" && "YouTube"}
-                    {platform === "facebook" && "Facebook"}
-                    {platform === "instagram" && "Instagram"}
-                    {platform === "tiktok" && "TikTok"}
-                    {platform === "unknown" && "Unknown Platform"}
-                  </CardTitle>
-                </div>
-                <CardDescription>
-                  {platform !== "unknown"
-                    ? "Select your preferred download format and quality"
-                    : "We couldn't identify the platform from this URL"}
-                </CardDescription>
-              </CardHeader>
+              <Card className="border-orange-500/20">
+                <CardHeader>
+                  <div className="flex items-center gap-3">
+                    {getPlatformIcon(platform)}
+                    <CardTitle>
+                      {platform === "youtube" && "YouTube"}
+                      {platform === "facebook" && "Facebook"}
+                      {platform === "instagram" && "Instagram"}
+                      {platform === "tiktok" && "TikTok"}
+                      {platform === "unknown" && "Unknown Platform"}
+                    </CardTitle>
+                  </div>
+                  <CardDescription>
+                    {platform !== "unknown"
+                      ? "Select your preferred download format and quality"
+                      : "We couldn't identify the platform from this URL"}
+                  </CardDescription>
+                </CardHeader>
 
-              {platform !== "unknown" && (
-                <CardContent>
-                  <Tabs defaultValue="video" className="w-full">
-                    <TabsList className="grid w-full grid-cols-2 bg-orange-950/20">
-                      <TabsTrigger
-                        value="video"
-                        className="data-[state=active]:bg-orange-600"
-                      >
-                        Video
-                      </TabsTrigger>
-                      <TabsTrigger
-                        value="audio"
-                        className="data-[state=active]:bg-orange-600"
-                      >
-                        Audio Only
-                      </TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="video" className="mt-4 space-y-4">
-                      <RadioGroup defaultValue="720p">
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="1080p" id="1080p" />
-                          <Label htmlFor="1080p">1080p HD (mp4)</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="720p" id="720p" />
-                          <Label htmlFor="720p">720p HD (mp4)</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="480p" id="480p" />
-                          <Label htmlFor="480p">480p (mp4)</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="360p" id="360p" />
-                          <Label htmlFor="360p">360p (mp4)</Label>
-                        </div>
-                      </RadioGroup>
-                      <Button className="w-full bg-orange-600 hover:bg-orange-700">
-                        Download Video
-                      </Button>
-                    </TabsContent>
-                    <TabsContent value="audio" className="mt-4 space-y-4">
-                      <RadioGroup defaultValue="mp3-high">
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="mp3-high" id="mp3-high" />
-                          <Label htmlFor="mp3-high">
-                            High Quality (320kbps mp3)
-                          </Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="mp3-medium" id="mp3-medium" />
-                          <Label htmlFor="mp3-medium">
-                            Medium Quality (192kbps mp3)
-                          </Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="mp3-low" id="mp3-low" />
-                          <Label htmlFor="mp3-low">
-                            Low Quality (128kbps mp3)
-                          </Label>
-                        </div>
-                      </RadioGroup>
-                      <Button className="w-full bg-orange-600 hover:bg-orange-700">
-                        Download Audio
-                      </Button>
-                    </TabsContent>
-                  </Tabs>
-                </CardContent>
-              )}
-            </Card>
+                {platform !== "unknown" && (
+                  <CardContent>
+                    <Tabs defaultValue="video" className="w-full">
+                      <TabsList className="grid w-full grid-cols-2 bg-orange-950/20">
+                        <TabsTrigger
+                          value="video"
+                          className="data-[state=active]:bg-orange-600"
+                        >
+                          Video
+                        </TabsTrigger>
+                        <TabsTrigger
+                          value="audio"
+                          className="data-[state=active]:bg-orange-600"
+                        >
+                          Audio Only
+                        </TabsTrigger>
+                      </TabsList>
+                      <TabsContent value="video" className="mt-4 space-y-4">
+                        <RadioGroup defaultValue="720p">
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="1080p" id="1080p" />
+                            <Label htmlFor="1080p">1080p HD (mp4)</Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="720p" id="720p" />
+                            <Label htmlFor="720p">720p HD (mp4)</Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="480p" id="480p" />
+                            <Label htmlFor="480p">480p (mp4)</Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="360p" id="360p" />
+                            <Label htmlFor="360p">360p (mp4)</Label>
+                          </div>
+                        </RadioGroup>
+                        <Button className="w-full bg-orange-600 hover:bg-orange-700">
+                          Download Video
+                        </Button>
+                      </TabsContent>
+                      <TabsContent value="audio" className="mt-4 space-y-4">
+                        <RadioGroup defaultValue="mp3-high">
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="mp3-high" id="mp3-high" />
+                            <Label htmlFor="mp3-high">
+                              High Quality (320kbps mp3)
+                            </Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem
+                              value="mp3-medium"
+                              id="mp3-medium"
+                            />
+                            <Label htmlFor="mp3-medium">
+                              Medium Quality (192kbps mp3)
+                            </Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="mp3-low" id="mp3-low" />
+                            <Label htmlFor="mp3-low">
+                              Low Quality (128kbps mp3)
+                            </Label>
+                          </div>
+                        </RadioGroup>
+                        <Button className="w-full bg-orange-600 hover:bg-orange-700">
+                          Download Audio
+                        </Button>
+                      </TabsContent>
+                    </Tabs>
+                  </CardContent>
+                )}
+              </Card>
+            )
           )}
 
           <div className="grid gap-6 md:grid-cols-3">
@@ -267,8 +284,8 @@ export default function Home() {
         </div>
       </main>
 
-      <footer className="border-t py-6">
-        <div className="container flex flex-col items-center justify-between gap-4 px-4 md:px-6 md:flex-row">
+      <footer className="border-t w-full py-6">
+        <div className="container flex flex-col items-center justify-between mx-auto gap-4 px-4 md:px-6 md:flex-row">
           <p className="text-sm text-muted-foreground text-center md:text-left">
             &copy; 2025 MediaGrab. For personal use only. Please respect
             copyright laws.

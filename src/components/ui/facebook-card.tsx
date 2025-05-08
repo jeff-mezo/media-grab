@@ -25,85 +25,132 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function FacebookCard({ passedURL }: { passedURL: string }) {
+  const [result, setResult] = useState<any>(null);
+  const [hasMounted, setHasMounted] = useState(false);
 
-  const [quality, setQuality] = useState("Low");
-  const [link, setLink] = useState("");
-  const [title, setTitle] = useState("");
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
 
-  const fetchLinks = async (quality: string) => {
-    const FacebookAPIBaseURL = "http://127.0.0.1:5000/get_video_links?url=";
-    try {
-      const res = await fetch(FacebookAPIBaseURL + passedURL);
-      const data = await res.json();
+  useEffect(() => {
+    const url = `https://free-facebook-downloader.p.rapidapi.com/external-api/facebook-video-downloader?url=${encodeURIComponent(
+      passedURL
+    )}`;
 
-      let downloadLink = '';
-      if (quality === "Low") {
-        downloadLink = data["links"]["Download Low Quality"];
-      } else if (quality === "High") {
-        downloadLink = data["links"]["Download High Quality"];
-      }
+    // const url = 'https://free-facebook-downloader.p.rapidapi.com/external-api/facebook-video-downloader?url=https%3A%2F%2Fwww.facebook.com%2Fwatch%3Fv%3D1320041659349823';
+    const options = {
+      method: "POST",
+      headers: {
+        "x-rapidapi-key": "62defc1244mshf9c49fc4fc5efa7p1c6906jsn2acdb310be52",
+        "x-rapidapi-host": "free-facebook-downloader.p.rapidapi.com",
+        "Content-Type": "application/json",
+      },
+      body: {
+        key1: "value",
+        key2: "value",
+      },
+    };
 
-      console.log(data)
-      const title = data["title"] || 'video';
+    fetch(url, options)
+      .then((response) => response.json())
+      .then((response) => {
+        console.log(response);
+        setResult(response);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }, [passedURL]);
 
-      // Trigger download
-      const anchor = document.createElement('a');
-      anchor.href = downloadLink;
-      anchor.download = `${title}.mp4`; // optional: this only works for same-origin or CORS-enabled links
-      anchor.style.display = 'none';
-      document.body.appendChild(anchor);
-      anchor.click();
-      document.body.removeChild(anchor);
+  const [quality, setQuality] = useState<string>("Download Low Quality");
 
-    } catch (error) {
-      console.error('Download failed:', error);
-    }
-  }
+  if (!hasMounted) return null;
 
   return (
-    <Card className="border-orange-500/20">
-      <CardHeader>
-        <div className="flex items-center gap-3">
-          <Facebook className="h-8 w-8 text-blue-600" />
-          <CardTitle>
-            Facebook
-          </CardTitle>
-        </div>
-        <CardDescription>
-          Select your preferred download format and quality
-        </CardDescription>
-        <CardDescription>
-          {link}
-        </CardDescription>
-      </CardHeader>
+    <div className="mt-4">
+      <Card className="border-orange-500/20">
+        <CardHeader>
+          <div className="flex items-center gap-3">
+            <Facebook className="h-8 w-8 text-blue-600" />
+            <CardTitle>Facebook</CardTitle>
+          </div>
+          <CardDescription>Media information</CardDescription>
+        </CardHeader>
 
-      <CardContent>
-        <Tabs defaultValue="video" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 bg-orange-950/20">
-            <TabsTrigger
-              value="video"
-              className="data-[state=active]:bg-orange-600"
-            >
-              Video
-            </TabsTrigger>
-          </TabsList>
-          <TabsContent value="video" className="mt-4 space-y-4">
-            <RadioGroup defaultValue={quality} onValueChange={(value) => setQuality(value)}>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="High" id="High" />
-                <Label htmlFor="High">High</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="Low" id="Low" />
-                <Label htmlFor="Low">Low</Label>
-              </div>
-            </RadioGroup>
-            <Button className="w-full bg-orange-600 hover:bg-orange-700" onClick={() => fetchLinks(quality)}>
-              Download Video
-            </Button>
-          </TabsContent>
-        </Tabs>
-      </CardContent>
-    </Card>
-  )
+        <CardContent>
+          {result?.success ? (
+            <div>
+              <p className="font-semibold">Title: {result.title}</p>
+              <video
+                src={result.links["Download Low Quality"]}
+                className="w-full mt-3 rounded"
+                controls
+                muted
+              />
+
+              {/* <div className="flex flex-col gap-3 mt-3">
+                <button
+                  className="bg-blue-600 text-white px-4 py-2 rounded"
+                  onClick={() => {
+                    const link = document.createElement("a");
+                    link.href = result.links["Download Low Quality"];
+                    link.download = "facebook-low-quality.mp4";
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                  }}
+                >
+                  Download Low Quality
+                </button>
+                <button
+                  className="bg-green-600 text-white px-4 py-2 rounded"
+                  onClick={() => {
+                    const link = document.createElement("a");
+                    link.href = result.links["Download High Quality"];
+                    link.download = "facebook-high-quality.mp4";
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                  }}
+                >
+                  Download High Quality
+                </button> */}
+
+              <RadioGroup
+                value={quality}
+                onValueChange={setQuality}
+                className="my-5"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="Download High Quality" id="high" />
+                  <Label htmlFor="high">Download High Quality</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="Download Low Quality" id="low" />
+                  <Label htmlFor="low">Download Low Quality</Label>
+                </div>
+              </RadioGroup>
+
+              <Button
+                className="w-full bg-orange-600 hover:bg-orange-700"
+                onClick={() => {
+                  const selectedUrl = result.links[quality];
+                  if (selectedUrl) {
+                    const a = document.createElement("a");
+                    a.href = selectedUrl;
+                    a.download = "video.mp4";
+                    a.click();
+                  }
+                }}
+              >
+                Download Video
+              </Button>
+            </div>
+          ) : (
+            <p className="text-muted-foreground">Fetching media...</p>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
 }
