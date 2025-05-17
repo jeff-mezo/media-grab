@@ -7,7 +7,7 @@ media-grab is a tool that allows users to download videos from various social me
 - npm
 - git
 
-## Installation:
+## Installation
 
 Navigate to your desired installation directory and open command prompt.
 Clone the repository using git.
@@ -27,7 +27,7 @@ Then, install requirements using npm:
 ```bash
 npm install
 ```
-## Setup:
+## Setup
 
 Create a .env file in the project's root directory and paste in your API keys. 
 ```bash

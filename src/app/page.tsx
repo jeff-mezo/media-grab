@@ -547,17 +547,6 @@ export default function Home() {
             &copy; 2025 MediaGrab. For personal use only. Please respect
             copyright laws.
           </p>
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="sm">
-              Terms
-            </Button>
-            <Button variant="ghost" size="sm">
-              Privacy
-            </Button>
-            <Button variant="ghost" size="sm">
-              Contact
-            </Button>
-          </div>
         </div>
       </footer>
     </div>
