@@ -33,7 +33,7 @@ export default function InstagramCard({ passedURL }: { passedURL: string }) {
   }, []);
 
   useEffect(() => {
-    const url = `https://instagram-scrapper-api-posts-reels-stories-downloader.p.rapidapi.com/instagram/?url=${encodeURIComponent(
+    const url = `https://instagram-downloader-download-instagram-reels-videos.p.rapidapi.com/post.php?url=${encodeURIComponent(
       passedURL
     )}`;
 
@@ -42,7 +42,7 @@ export default function InstagramCard({ passedURL }: { passedURL: string }) {
       headers: {
         "x-rapidapi-key": "62defc1244mshf9c49fc4fc5efa7p1c6906jsn2acdb310be52",
         "x-rapidapi-host":
-          "instagram-scrapper-api-posts-reels-stories-downloader.p.rapidapi.com",
+          "instagram-downloader-download-instagram-reels-videos.p.rapidapi.com",
       },
     };
 
@@ -71,26 +71,30 @@ export default function InstagramCard({ passedURL }: { passedURL: string }) {
         </CardHeader>
 
         <CardContent>
-          {result?.links && (
+          {result?.data && (
             <div className="mt-4">
-              <p>
+              {/* <p>
                 <strong>Author:</strong> {result.links[0].author}
-              </p>
-              <p>
-                <strong>Title:</strong> {result.links[0].title}
-              </p>
-              {/* <img src={result.links[0].preview} alt="Preview" className="w-64" /> */}
+              </p> */}
+              {/* <p>
+                <strong>Title:</strong> {result.data[0].thumbnail}
+              </p> */}
+              {/* <img
+                src={result.data[0].thumbnail}
+                alt="Preview"
+                className="w-64"
+              /> */}
               <video controls className="mt-2 w-64">
-                <source src={result.links[0].url} type="video/mp4" />
+                <source src={result.data[0].download} type="video/mp4" />
               </video>
-              <p>
-                <strong>Quality:</strong> {result.links[0].quality}
-              </p>
+              {/* <p>
+                <strong>Quality:</strong> {result.data[0].quality}
+              </p> */}
               <Button
                 className="w-full bg-orange-600 hover:bg-orange-700"
                 onClick={() => {
                   const link = document.createElement("a");
-                  link.href = result.links[0].url;
+                  link.href = result.data[0].download;
                   link.download = "instagram-video.mp4";
                   document.body.appendChild(link);
                   link.click();
